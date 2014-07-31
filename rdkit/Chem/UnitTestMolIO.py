@@ -1,5 +1,5 @@
 """
-Tests for serial.py.
+Tests for MolIO.py.
 """
 import cPickle
 import gzip
