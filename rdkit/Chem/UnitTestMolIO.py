@@ -9,8 +9,7 @@ import unittest
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
-
-from rdkit_utils import conformers, serial
+from rdkit.Chem.MolIO import MolReader, MolWriter
 
 
 class TestMolIO(unittest.TestCase):
@@ -38,7 +37,7 @@ class TestMolIO(unittest.TestCase):
             'levalbuterol hydrochloride')
 
         self.ref_mols = [self.aspirin, self.levalbuterol]
-        self.reader = serial.MolReader(compute_2d_coords=False)
+        self.reader = MolReader(compute_2d_coords=False)
 
     def _get_mol_from_smiles(self, smiles, name=None):
         """
@@ -108,13 +107,13 @@ class TestMolIO(unittest.TestCase):
         """
         _, filename = tempfile.mkstemp(suffix='.sdf', dir=self.temp_dir)
         with open(filename) as f:
-            reader = serial.MolReader(f, mol_format='sdf')
+            reader = MolReader(f, mol_format='sdf')
             reader.close()
             assert not f.closed
 
         # also test the context manager
         with open(filename) as g:
-            with serial.MolReader(g, mol_format='sdf'):
+            with MolReader(g, mol_format='sdf'):
                 pass
             assert not g.closed
 
@@ -213,7 +212,7 @@ class TestMolReader(TestMolIO):
         with open(filename, 'wb') as f:
             f.write(Chem.MolToMolBlock(self.aspirin))
         with open(filename) as f:
-            reader = serial.MolReader(f, mol_format='sdf')
+            reader = MolReader(f, mol_format='sdf')
             mols = reader.get_mols()
             assert mols.next().ToBinary() == self.aspirin.ToBinary()
 
@@ -225,7 +224,7 @@ class TestMolReader(TestMolIO):
         with gzip.open(filename, 'wb') as f:
             f.write(Chem.MolToMolBlock(self.aspirin))
         with gzip.open(filename) as f:
-            reader = serial.MolReader(f, mol_format='sdf')
+            reader = MolReader(f, mol_format='sdf')
             mols = reader.get_mols()
             assert mols.next().ToBinary() == self.aspirin.ToBinary()
 
@@ -273,9 +272,8 @@ class TestMolReader(TestMolIO):
         """
 
         # generate conformers
-        engine = conformers.ConformerGenerator(max_conformers=3,
-                                               pool_multiplier=1)
-        ref_mol = engine.generate_conformers(self.aspirin)
+        ref_mol = Chem.AddHs(self.aspirin)
+        AllChem.EmbedMultipleConfs(ref_mol, numConfs=3)
         assert ref_mol.GetNumConformers() > 1
 
         # write to disk
@@ -301,12 +299,11 @@ class TestMolReader(TestMolIO):
 
         # generate conformers
         ref_mols = []
-        engine = conformers.ConformerGenerator(max_conformers=3,
-                                               pool_multiplier=1)
         for mol in self.ref_mols:
-            expanded = engine.generate_conformers(mol)
-            assert expanded.GetNumConformers() > 1
-            ref_mols.append(expanded)
+            mol = Chem.AddHs(mol)
+            AllChem.EmbedMultipleConfs(mol, numConfs=3)
+            assert mol.GetNumConformers() > 1
+            ref_mols.append(mol)
 
         # write to disk
         _, filename = tempfile.mkstemp(suffix='.sdf', dir=self.temp_dir)
@@ -344,7 +341,7 @@ class TestMolReader(TestMolIO):
         _, filename = tempfile.mkstemp(suffix='.sdf', dir=self.temp_dir)
         with open(filename, 'wb') as f:
             f.write(Chem.MolToMolBlock(self.aspirin_h))
-        reader = serial.MolReader(remove_hydrogens=False)
+        reader = MolReader(remove_hydrogens=False)
         reader.open(filename)
         mols = reader.get_mols()
         # FIXME get ToBinary test to work
@@ -359,7 +356,7 @@ class TestMolReader(TestMolIO):
         _, filename = tempfile.mkstemp(suffix='.sdf', dir=self.temp_dir)
         with open(filename, 'wb') as f:
             f.write(Chem.MolToMolBlock(self.aspirin_h))
-        reader = serial.MolReader(remove_hydrogens=True)
+        reader = MolReader(remove_hydrogens=True)
         reader.open(filename)
         mols = reader.get_mols()
         assert mols.next().ToBinary() == self.aspirin.ToBinary()
@@ -374,7 +371,7 @@ class TestMolReader(TestMolIO):
                 f.write(Chem.MolToMolBlock(mol))
                 f.write('$$$$\n')  # molecule delimiter
         ref_mols = [self.aspirin_sodium, self.levalbuterol_hcl]
-        reader = serial.MolReader(remove_salts=True)
+        reader = MolReader(remove_salts=True)
         reader.open(filename)
         mols = reader.get_mols()
         mols = list(mols)
@@ -394,7 +391,7 @@ class TestMolReader(TestMolIO):
                 f.write(Chem.MolToMolBlock(mol))
                 f.write('$$$$\n')  # molecule delimiter
         ref_mols = [self.aspirin_sodium, self.levalbuterol_hcl]
-        reader = serial.MolReader(remove_salts=False)
+        reader = MolReader(remove_salts=False)
         reader.open(filename)
         mols = reader.get_mols()
         mols = list(mols)
@@ -440,7 +437,7 @@ class TestMolWriter(TestMolIO):
         Add writer to inherited setup.
         """
         super(TestMolWriter, self).setUp()
-        self.writer = serial.MolWriter()
+        self.writer = MolWriter()
         self.aspirin_sdf = Chem.MolToMolBlock(self.aspirin)
         self.aspirin_smiles = Chem.MolToSmiles(self.aspirin) + '\taspirin'
 
@@ -579,7 +576,7 @@ class TestMolWriter(TestMolIO):
         Test stereochemistry preservation when writing to SDF.
         """
         _, filename = tempfile.mkstemp(suffix='.sdf', dir=self.temp_dir)
-        writer = serial.MolWriter(stereo=True)
+        writer = MolWriter(stereo=True)
         writer.open(filename)
         writer.write([self.levalbuterol])
         writer.close()
@@ -595,7 +592,7 @@ class TestMolWriter(TestMolIO):
         ref_mol = Chem.MolFromSmiles(Chem.MolToSmiles(self.levalbuterol,
                                                       isomericSmiles=True))
         _, filename = tempfile.mkstemp(suffix='.smi', dir=self.temp_dir)
-        writer = serial.MolWriter(stereo=True)
+        writer = MolWriter(stereo=True)
         writer.open(filename)
         writer.write([self.levalbuterol])
         writer.close()
@@ -608,7 +605,7 @@ class TestMolWriter(TestMolIO):
         Test stereochemistry removal when writing to SDF.
         """
         _, filename = tempfile.mkstemp(suffix='.sdf', dir=self.temp_dir)
-        writer = serial.MolWriter(stereo=False)
+        writer = MolWriter(stereo=False)
         writer.open(filename)
         writer.write([self.levalbuterol])
         writer.close()
@@ -632,7 +629,7 @@ class TestMolWriter(TestMolIO):
         Test stereochemistry removal when writing to SMILES.
         """
         _, filename = tempfile.mkstemp(suffix='.smi', dir=self.temp_dir)
-        writer = serial.MolWriter(stereo=False)
+        writer = MolWriter(stereo=False)
         writer.open(filename)
         writer.write([self.levalbuterol])
         writer.close()
