@@ -10,6 +10,7 @@ tests=[
   ("python","UnitTestLipinski.py",{}),
   ("python","MCS.py",{}),
   ("python","UnitTestMCS.py",{}),
+  ("python","UnitTestMolIO.py",{}),
   ("python","UnitTestOldBugs.py",{}),
   ("python","UnitTestSATIS.py",{}),
   ("python","UnitTestSmiles.py",{}),
