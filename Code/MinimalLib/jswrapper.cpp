@@ -15,7 +15,6 @@ using namespace emscripten;
 EMSCRIPTEN_BINDINGS(RDKit_minimal) {
   class_<JSMol>("Mol")
       .function("is_valid", &JSMol::is_valid)
-      .function("get_inchi", &JSMol::get_inchi)
       .function("get_substruct_match", &JSMol::get_substruct_match)
       .function("get_substruct_matches", &JSMol::get_substruct_matches);
 

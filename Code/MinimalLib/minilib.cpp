@@ -17,8 +17,6 @@
 #include <GraphMol/SmilesParse/SmilesParse.h>
 #include <GraphMol/Substruct/SubstructMatch.h>
 
-#include <INCHI-API/inchi.h>
-
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
@@ -51,12 +49,6 @@ ROMol *qmol_from_input(const std::string &input) {
   return res;
 }
 }  // namespace
-
-std::string JSMol::get_inchi() const {
-  if (!d_mol) return "";
-  ExtraInchiReturnValues rv;
-  return MolToInchi(*d_mol, rv);
-}
 
 namespace {
 void get_sss_json(const ROMol *d_mol, const ROMol *q_mol,

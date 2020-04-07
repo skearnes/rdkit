@@ -15,7 +15,6 @@ class JSMol {
  public:
   JSMol() : d_mol(nullptr){};
   JSMol(RDKit::ROMol *mol) : d_mol(mol){};
-  std::string get_inchi() const;
   std::string get_substruct_match(const JSMol &q) const;
   std::string get_substruct_matches(const JSMol &q) const;
 
