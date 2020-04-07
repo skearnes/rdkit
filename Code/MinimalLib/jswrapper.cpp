@@ -18,7 +18,7 @@ EMSCRIPTEN_BINDINGS(RDKit_minimal) {
       .function("get_smiles", &JSMol::get_smiles)
       .function("get_inchi", &JSMol::get_inchi)
       .function("get_substruct_match", &JSMol::get_substruct_match)
-      .function("get_substruct_matches", &JSMol::get_substruct_matches)
+      .function("get_substruct_matches", &JSMol::get_substruct_matches);
 
   function("version", &version);
   function("get_inchikey_for_inchi", &get_inchikey_for_inchi);
