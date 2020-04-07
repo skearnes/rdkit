@@ -15,8 +15,6 @@ using namespace emscripten;
 EMSCRIPTEN_BINDINGS(RDKit_minimal) {
   class_<JSMol>("Mol")
       .function("is_valid", &JSMol::is_valid)
-      .function("get_substruct_match", &JSMol::get_substruct_match)
-      .function("get_substruct_matches", &JSMol::get_substruct_matches);
 
   function("version", &version);
   function("get_mol", &get_mol, allow_raw_pointers());
