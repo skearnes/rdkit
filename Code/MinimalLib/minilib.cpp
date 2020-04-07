@@ -49,12 +49,7 @@ ROMol *mol_from_input(const std::string &input) {
 
 ROMol *qmol_from_input(const std::string &input) {
   RWMol *res = nullptr;
-  if (input.find("M  END") != std::string::npos) {
-    bool sanitize = false;
-    res = MolBlockToMol(input, sanitize);
-  } else {
-    res = SmartsToMol(input);
-  }
+  res = SmartsToMol(input);
   return res;
 }
 }  // namespace
