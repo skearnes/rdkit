@@ -36,26 +36,12 @@ function test_basics(){
     assert.equal(descrs.NumRings,1);
     assert.equal(descrs.amw,94.11299);
 
-    var fp1 = mol.get_morgan_fp();
-    assert.equal(fp1.length,2048);
-    assert.equal((fp1.match(/1/g)||[]).length,11);
-    var fp2 = mol.get_morgan_fp(0,512);
-    assert.equal(fp2.length,512);
-    assert.equal((fp2.match(/1/g)||[]).length,3);
-    
-    var svg = mol.get_svg();
-    assert(svg.search("svg")>0);
-
     var qmol = Module.get_qmol("Oc(c)c");
     assert.equal(qmol.is_valid(),1);
     var match = mol.get_substruct_match(qmol);
     var pmatch = JSON.parse(match);
     assert.equal(pmatch.atoms.length,4);
     assert.equal(pmatch.atoms[0],6);
-    var svg2 = mol.get_svg_with_highlights(match);
-    assert(svg2.search("svg")>0);
-    assert(svg.search("#FF7F7F")<0);
-    assert(svg2.search("#FF7F7F")>0);
 }
 
 function test_sketcher_services(){

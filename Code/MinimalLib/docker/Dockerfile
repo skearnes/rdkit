@@ -45,19 +45,19 @@ WORKDIR build
 
 RUN echo "source /opt/emsdk/emsdk_env.sh" >> ~/.bashrc
 SHELL ["/bin/bash", "-c", "-l"]
-RUN emconfigure cmake -DBoost_INCLUDE_DIR=/opt/boost/include -DRDK_BUILD_MINIMAL_LIB=ON \
+RUN emcmake cmake -Oz -DBoost_INCLUDE_DIR=/opt/boost/include -DRDK_BUILD_MINIMAL_LIB=ON \
   -DRDK_BUILD_PYTHON_WRAPPERS=OFF -DRDK_BUILD_CPP_TESTS=OFF -DRDK_BUILD_INCHI_SUPPORT=ON \
   -DRDK_USE_BOOST_SERIALIZATION=OFF -DRDK_OPTIMIZE_POPCNT=OFF -DRDK_BUILD_THREADSAFE_SSS=OFF \
   -DRDK_BUILD_DESCRIPTORS3D=OFF -DRDK_TEST_MULTITHREADED=OFF -DRDK_BUILD_COORDGEN_SUPPORT=OFF \
   -DRDK_BUILD_SLN_SUPPORT=OFF -DRDK_USE_BOOST_IOSTREAMS=OFF -DCMAKE_CXX_FLAGS="-s DISABLE_EXCEPTION_CATCHING=0" \
-  -DCMAKE_C_FLAGS="-DCOMPILE_ANSI_ONLY"  ..
+  -DCMAKE_C_FLAGS="-DCOMPILE_ANSI_ONLY" -DCMAKE_CXX_FLAGS="-Oz"  ..
 
 # "patch" to make the InChI code work with emscripten:
 RUN cp /src/rdkit/External/INCHI-API/src/INCHI_BASE/src/util.c /src/rdkit/External/INCHI-API/src/INCHI_BASE/src/util.c.bak && \
   sed 's/&& defined(__APPLE__)//' /src/rdkit/External/INCHI-API/src/INCHI_BASE/src/util.c.bak > /src/rdkit/External/INCHI-API/src/INCHI_BASE/src/util.c
 
 # build and "install"
-RUN make -j2 RDKit_minimal && \
+RUN make -j4 RDKit_minimal && \
   cp Code/MinimalLib/RDKit_minimal.* ../Code/MinimalLib/demo/
 
 # run the tests
