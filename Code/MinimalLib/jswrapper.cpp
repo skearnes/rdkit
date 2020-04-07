@@ -13,8 +13,7 @@
 
 using namespace emscripten;
 EMSCRIPTEN_BINDINGS(RDKit_minimal) {
-  class_<JSMol>("Mol")
-      .function("is_valid", &JSMol::is_valid)
+  class_<JSMol>("Mol").function("is_valid", &JSMol::is_valid);
 
   function("version", &version);
   function("get_mol", &get_mol, allow_raw_pointers());
