@@ -32,14 +32,9 @@ using namespace RDKit;
 namespace {
 ROMol *mol_from_input(const std::string &input) {
   RWMol *res = nullptr;
-  if (input.find("M  END") != std::string::npos) {
-    bool sanitize = false;
-    res = MolBlockToMol(input, sanitize);
-  } else {
-    SmilesParserParams ps;
-    ps.sanitize = false;
-    res = SmilesToMol(input, ps);
-  }
+  SmilesParserParams ps;
+  ps.sanitize = false;
+  res = SmilesToMol(input, ps);
   if (res) {
     try {
       MolOps::sanitizeMol(*res);
