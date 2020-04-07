@@ -15,7 +15,6 @@ class JSMol {
  public:
   JSMol() : d_mol(nullptr){};
   JSMol(RDKit::ROMol *mol) : d_mol(mol){};
-  std::string get_smiles() const;
   std::string get_inchi() const;
   std::string get_substruct_match(const JSMol &q) const;
   std::string get_substruct_matches(const JSMol &q) const;
@@ -26,7 +25,6 @@ class JSMol {
   std::unique_ptr<RDKit::ROMol> d_mol;
 };
 
-std::string get_inchikey_for_inchi(const std::string &input);
 JSMol *get_mol(const std::string &input);
 JSMol *get_qmol(const std::string &input);
 std::string version();

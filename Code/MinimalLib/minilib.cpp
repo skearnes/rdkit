@@ -14,9 +14,7 @@
 
 #include <RDGeneral/versions.h>
 #include <GraphMol/RDKitBase.h>
-#include <GraphMol/MolPickler.h>
 #include <GraphMol/SmilesParse/SmilesParse.h>
-#include <GraphMol/SmilesParse/SmilesWrite.h>
 #include <GraphMol/Substruct/SubstructMatch.h>
 
 #include <INCHI-API/inchi.h>
@@ -54,10 +52,6 @@ ROMol *qmol_from_input(const std::string &input) {
 }
 }  // namespace
 
-std::string JSMol::get_smiles() const {
-  if (!d_mol) return "";
-  return MolToSmiles(*d_mol);
-}
 std::string JSMol::get_inchi() const {
   if (!d_mol) return "";
   ExtraInchiReturnValues rv;
@@ -127,10 +121,6 @@ std::string JSMol::get_substruct_matches(const JSMol &q) const {
   }
 
   return res;
-}
-
-std::string get_inchikey_for_inchi(const std::string &input) {
-  return InchiToInchiKey(input);
 }
 
 JSMol *get_mol(const std::string &input) {
