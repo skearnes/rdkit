@@ -1,8 +1,6 @@
 include_directories(${RDKit_ExternalDir})
 include_directories(${RDKit_ExternalDir}/rapidjson-1.1.0/include)
 
-find_package(Boost ${RDK_BOOST_VERSION} COMPONENTS system iostreams REQUIRED)
-
 add_executable(RDKit_minimal jswrapper.cpp minilib.cpp)
 target_link_libraries(RDKit_minimal SmilesParse_static RDGeneral_static)
 
