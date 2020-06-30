@@ -17,7 +17,7 @@ WORKDIR /opt
 RUN wget -q https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz && \
   tar xzf boost_1_67_0.tar.gz 
 WORKDIR /opt/boost_1_67_0
-RUN ./bootstrap.sh --prefix=/opt/boost --with-libraries=system && \
+RUN ./bootstrap.sh --prefix=/opt/boost --with-libraries=system,iostreams && \
   ./b2 install
 
 
@@ -38,7 +38,6 @@ ENV RDBASE=/src/rdkit
 ARG RDKIT_BRANCH
 RUN git clone https://github.com/skearnes/rdkit.git
 WORKDIR $RDBASE
-RUN git pull
 RUN git checkout small
 
 RUN mkdir build
@@ -50,7 +49,7 @@ RUN emcmake cmake -Oz -DBoost_INCLUDE_DIR=/opt/boost/include -DRDK_BUILD_MINIMAL
   -DRDK_BUILD_PYTHON_WRAPPERS=OFF -DRDK_BUILD_CPP_TESTS=OFF -DRDK_BUILD_INCHI_SUPPORT=OFF \
   -DRDK_USE_BOOST_SERIALIZATION=OFF -DRDK_OPTIMIZE_POPCNT=OFF -DRDK_BUILD_THREADSAFE_SSS=OFF \
   -DRDK_BUILD_DESCRIPTORS3D=OFF -DRDK_TEST_MULTITHREADED=OFF -DRDK_BUILD_COORDGEN_SUPPORT=OFF \
-  -DRDK_BUILD_SLN_SUPPORT=OFF -DRDK_USE_BOOST_IOSTREAMS=ON -DCMAKE_CXX_FLAGS="-s DISABLE_EXCEPTION_CATCHING=0" \
+  -DRDK_BUILD_SLN_SUPPORT=OFF -DRDK_USE_BOOST_IOSTREAMS=OFF -DCMAKE_CXX_FLAGS="-s DISABLE_EXCEPTION_CATCHING=0" \
   -DCMAKE_C_FLAGS="-DCOMPILE_ANSI_ONLY" -DRDK_BUILD_FREETYPE_SUPPORT=OFF -Wno-dev ..
 
 # "patch" to make the InChI code work with emscripten:
