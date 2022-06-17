@@ -2,7 +2,15 @@
 
 Below a number of installation recipes is presented, with varying degree of complexity.
 
-## Cross-platform under anaconda python (fastest install)
+## Cross-platform with python via pip (fastest install)
+
+```shellsession
+$ pip install rdkit
+```
+
+The [PyPI package](https://pypi.org/project/rdkit/) for rdkit is maintained by @kuelumbus.
+
+## Cross-platform under anaconda python
 
 ### Introduction to anaconda
 
